@@ -23,3 +23,10 @@ The alphabet is ordered `0-9 A-Z a-z` (GMP order, not RFC 4648). The specific pr
 - `encode` rejects negative integers and non-int inputs with `ValueError` / `TypeError`. There is no signed representation.
 - `decode` raises `ValueError` on empty input or any character outside the 62-character alphabet. It does not tolerate whitespace, `+`, `/`, `=`, or any base64 character. A bad id should fail loudly at the boundary, not become a silent `None`.
 - There is no support for fixed-width padding. If you need ids of a constant width, left-pad with `"0"` yourself and strip before decoding.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
